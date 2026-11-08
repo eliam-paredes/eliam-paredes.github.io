@@ -29,7 +29,7 @@ export default function Skills() {
     return (
         <section id="skills-section" className="w-full min-h-screen py-24 px-6 bg-background relative overflow-hidden transition-colors duration-300">
             {/* Background dual glowing elements */}
-            <div className="absolute top-1/2 left-1/2 w-[60vw] h-[60vh] bg-gradient-to-tr from-brand-primary/5 to-brand-secondary/5 rounded-full mix-blend-screen filter blur-[180px] -translate-x-1/2 -translate-y-1/2 pointer-events-none animate-pulse"></div>
+            <div className="absolute top-1/2 left-1/2 w-[60vw] h-[60vh] bg-gradient-to-tr from-brand-primary/5 to-brand-secondary/5 rounded-full mix-blend-screen filter blur-[180px] -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto z-10 relative">
                 {/* Header */}

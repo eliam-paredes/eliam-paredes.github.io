@@ -14,7 +14,7 @@ export default function Contact({ onEnterBackend }: ContactProps) {
     return (
         <section id="contact-section" className="w-full min-h-screen py-24 px-6 bg-gradient-to-b from-background-secondary to-background relative overflow-hidden transition-colors duration-300">
             {/* Background elements (Magenta to Cyan glow) */}
-            <div className="absolute bottom-0 right-0 w-[50vw] h-[50vh] bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 rounded-full mix-blend-screen filter blur-[150px] pointer-events-none animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-[50vw] h-[50vh] bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 rounded-full mix-blend-screen filter blur-[150px] pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto z-10 relative">
                 {/* Header */}

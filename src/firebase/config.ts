@@ -1,9 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAnalytics, isSupported, type Analytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 
 // Correo del administrador autorizado estrictamente
 export const ADMIN_EMAIL = "eliamjesusparedes@gmail.com";
@@ -23,20 +19,24 @@ export const firebaseConfig = {
 // Initialize Firebase App (prevent re-initialization in HMR)
 export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Services
-export const auth = getAuth(app);
-export const db = firebaseConfig.databaseURL ? getDatabase(app) : null; // Realtime Database
-export const firestore = getFirestore(app);
-export const storage = getStorage(app);
+// Realtime Database: lo único que necesita la página pública.
+// Auth vive en ./auth (solo lo importa el panel admin, en un chunk aparte).
+export const db = firebaseConfig.databaseURL ? getDatabase(app) : null;
 
-// Analytics instance (async safe for environments without window/analytics support)
-export let analytics: Analytics | null = null;
+// Analytics se carga de forma diferida, después de que la página terminó de cargar,
+// para que no compita con el render inicial.
 if (typeof window !== "undefined") {
-  isSupported().then((supported) => {
-    if (supported) {
-      analytics = getAnalytics(app);
-    }
-  }).catch(() => {
-    // Analytics not supported in this environment
-  });
+  const loadAnalytics = () => {
+    import("firebase/analytics")
+      .then(({ isSupported, getAnalytics }) =>
+        isSupported().then((ok) => { if (ok) getAnalytics(app); })
+      )
+      .catch(() => { /* Analytics no soportado */ });
+  };
+  const idle = () => {
+    if ("requestIdleCallback" in window) window.requestIdleCallback(loadAnalytics, { timeout: 5000 });
+    else setTimeout(loadAnalytics, 3000);
+  };
+  if (document.readyState === "complete") idle();
+  else window.addEventListener("load", idle, { once: true });
 }

@@ -12,6 +12,7 @@ import {
 import type { User as FirebaseUser } from 'firebase/auth';
 import { ref, set } from 'firebase/database';
 import { db } from '../../firebase';
+import { usePortfolioData } from '../../context/DataContext';
 
 interface ArchivoTabProps {
   user: FirebaseUser | null;
@@ -21,6 +22,7 @@ interface ArchivoTabProps {
 }
 
 export default function ArchivoTab({ user, bdData, onUpdateData, onGoToLogin }: ArchivoTabProps) {
+  const { setPublishedData } = usePortfolioData();
   const [publishing, setPublishing] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [importedFileName, setImportedFileName] = useState<string | null>(null);
@@ -90,6 +92,7 @@ export default function ArchivoTab({ user, bdData, onUpdateData, onGoToLogin }: 
 
     try {
       await set(ref(db, 'portfolio/bdData'), cleanData);
+      setPublishedData(cleanData);
       setStatusMessage({ 
         type: 'success', 
         text: '¡Datos publicados exitosamente en Realtime Database!' 

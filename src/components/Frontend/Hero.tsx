@@ -1,32 +1,52 @@
-import ThreeBackground from './ThreeBackground';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { scrollToId } from '../../lib/scroll';
 import { ChevronDown, Mail, Linkedin, Github } from 'lucide-react';
 import { usePortfolioData } from '../../context/DataContext';
 
+// Three.js + los modelos 3D solo se cargan en escritorio (chunk separado).
+const ThreeBackground = lazy(() => import('./ThreeBackground'));
+const DESKTOP_QUERY = '(min-width: 1024px)';
+
 export default function Hero() {
     const { data: profile } = usePortfolioData();
+    const [isDesktop, setIsDesktop] = useState(
+        () => typeof window !== 'undefined' && window.matchMedia(DESKTOP_QUERY).matches
+    );
+
+    useEffect(() => {
+        const mql = window.matchMedia(DESKTOP_QUERY);
+        const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+        mql.addEventListener('change', onChange);
+        return () => mql.removeEventListener('change', onChange);
+    }, []);
+
     const upworkUrl = profile.links?.upwork || 'https://www.upwork.com/freelancers/~017c66dbe126786cbe';
     const githubUrl = profile.links?.github || 'https://github.com/MaravStress';
 
     const handleScrollToReviews = () => {
-        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' });
+        scrollToId('reviews-section');
     };
 
     const handleScrollToContact = () => {
-        document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' });
+        scrollToId('contact-section');
     };
 
     return (
         <section id="hero-section" className="relative w-full min-h-screen flex flex-col justify-center overflow-hidden py-20 lg:py-24">
             {/* 3D Background */}
-            <ThreeBackground className="absolute top-0 left-0 z-0 w-full h-screen overflow-hidden pointer-events-none" />
+            {isDesktop && (
+                <Suspense fallback={null}>
+                    <ThreeBackground className="absolute top-0 left-0 z-0 w-full h-screen overflow-hidden pointer-events-none" />
+                </Suspense>
+            )}
 
             {/* Content Container (Header) */}
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 mb-8 mt-12 lg:mt-0">
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-6 mb-8 mt-24 lg:mt-0">
 
-                <h1 className="text-8xl md:text-8xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-purple-500 to-brand-secondary drop-shadow-sm leading-tight">
+                <h1 className="text-5xl sm:text-6xl md:text-8xl font-display font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-purple-500 to-brand-secondary drop-shadow-sm leading-tight break-words">
                     {profile.personalInfo.name.toUpperCase()}
                 </h1>
-                <span className="text-brand-secondary font-display text-sm tracking-widest uppercase font-bold block mb-2">
+                <span className="text-brand-secondary font-display text-xs sm:text-sm tracking-widest uppercase font-bold block mb-2">
                     PROGRAMADOR & DISEÑADOR 3D
                 </span>
             </div>
@@ -91,7 +111,7 @@ export default function Hero() {
                         </div>
 
                         {/* CTA Buttons */}
-                        <div className="pt-2 flex gap-4">
+                        <div className="pt-2 flex flex-wrap gap-3 sm:gap-4">
                             <button
                                 onClick={handleScrollToContact}
                                 className="px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-secondary hover:from-brand-primary-light hover:to-brand-secondary-light text-white font-display font-semibold rounded-lg shadow-lg shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer"
@@ -99,7 +119,7 @@ export default function Hero() {
                                 Contáctame
                             </button>
                             <button
-                                onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                                onClick={() => scrollToId('features')}
                                 className="px-6 py-3 border border-panel-border hover:border-brand-secondary text-foreground hover:text-brand-secondary-light font-display rounded-lg hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer"
                             >
                                 Ver Proyectos
@@ -143,11 +163,11 @@ export default function Hero() {
             </div>
 
             {/* Decorative gradient orb (magenta to cyan) */}
-            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-full mix-blend-screen filter blur-[150px] opacity-20 animate-pulse pointer-events-none"></div>
+            <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-full mix-blend-screen filter blur-[150px] opacity-20 pointer-events-none"></div>
 
             {/* Scroll indicator */}
             <div
-                className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center animate-bounce text-text-muted hover:text-foreground transition-colors cursor-pointer"
+                className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex-col items-center animate-bounce text-text-muted hover:text-foreground transition-colors cursor-pointer"
                 onClick={handleScrollToReviews}
             >
                 <span className="text-sm font-medium tracking-widest uppercase mb-2">Ver Testimonios</span>

@@ -1,10 +1,1 @@
-export {
-  app,
-  firebaseConfig,
-  ADMIN_EMAIL,
-  auth,
-  db,
-  firestore,
-  storage,
-  analytics
-} from "./config";
+export { app, firebaseConfig, ADMIN_EMAIL, db } from "./config";

@@ -12,7 +12,7 @@ import {
     Lock
 } from 'lucide-react';
 import { onAuthStateChanged, type User as FirebaseUser } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../firebase/auth';
 import { usePortfolioData } from '../context/DataContext';
 import CvEditor from '../components/Backend/CvEditor';
 import ProjectEditor from '../components/Backend/ProjectEditor';
@@ -94,7 +94,7 @@ export default function Backend({ onBack }: BackendProps) {
     return (
         <section className="w-full min-h-screen bg-background text-foreground relative overflow-hidden p-6 md:p-12 font-body transition-colors duration-300">
             {/* Ambient glowing shapes */}
-            <div className="absolute top-[-10%] left-[-10%] w-[35%] h-[35%] bg-gradient-to-tr from-brand-primary/10 to-brand-secondary/15 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none animate-pulse"></div>
+            <div className="absolute top-[-10%] left-[-10%] w-[35%] h-[35%] bg-gradient-to-tr from-brand-primary/10 to-brand-secondary/15 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] right-[-10%] w-[35%] h-[35%] bg-gradient-to-tr from-brand-secondary/15 to-brand-primary/10 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto z-10 relative flex flex-col gap-8">

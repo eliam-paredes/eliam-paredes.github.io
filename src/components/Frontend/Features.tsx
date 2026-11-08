@@ -6,6 +6,13 @@ import { usePortfolioData } from '../../context/DataContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop';
+
+// Las tarjetas muestran la imagen a ~230px de ancho: pedimos a Behance
+// la variante de 632px en lugar de la original (fs) o la de 1200px.
+const optimizeImageUrl = (url?: string) =>
+    url ? url.replace(/(behance\.net\/project_modules\/)(fs|max_1200|max_3840|1400|source)\//, '$1max_632/') : url;
+
 interface ProjectData {
     id: string;
     titulo: string;
@@ -109,11 +116,17 @@ export default function Features() {
                 {/* Left Side: Image */}
                 <div className="w-full md:w-[40%] h-[180px] md:h-full min-h-[180px] shrink-0 overflow-hidden relative border-b md:border-b-0 md:border-r border-panel-border/40">
                     <img
-                        src={project.imagen}
+                        src={optimizeImageUrl(project.imagen)}
                         alt={project.titulo}
+                        loading="lazy"
+                        decoding="async"
+                        width={232}
+                        height={240}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop';
+                            const img = e.currentTarget;
+                            if (img.src === FALLBACK_IMAGE) return; // evita bucle si el fallback también falla
+                            img.src = FALLBACK_IMAGE;
                         }}
                     />
                 </div>
@@ -174,7 +187,7 @@ export default function Features() {
             className="w-full min-h-screen md:h-screen py-24 md:py-0 bg-background relative overflow-hidden flex flex-col justify-center transition-colors duration-300"
         >
             {/* Ambient Background Lights */}
-            <div className="absolute top-1/4 left-[-10%] w-96 h-96 bg-gradient-to-tr from-brand-primary/10 to-brand-secondary/10 rounded-full filter blur-[150px] pointer-events-none animate-pulse"></div>
+            <div className="absolute top-1/4 left-[-10%] w-96 h-96 bg-gradient-to-tr from-brand-primary/10 to-brand-secondary/10 rounded-full filter blur-[150px] pointer-events-none"></div>
             <div className="absolute bottom-1/4 right-[-10%] w-96 h-96 bg-gradient-to-tr from-brand-secondary/10 to-brand-primary/10 rounded-full filter blur-[150px] pointer-events-none"></div>
 
             {/* fixed header wrapper on desktop */}

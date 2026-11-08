@@ -142,7 +142,7 @@ export default function Reviews() {
         return (
             <div 
                 key={review.id}
-                className={`w-[350px] md:w-[420px] h-[320px] p-8 rounded-2xl glass-panel relative group hover:border-brand-primary/40 transition-all duration-500 shadow-xl bg-panel backdrop-blur-xl border border-panel-border/60 flex flex-col justify-between`}
+                className={`w-[85vw] max-w-[420px] md:w-[420px] h-[320px] p-6 md:p-8 rounded-2xl glass-panel relative group hover:border-brand-primary/40 transition-all duration-500 shadow-xl bg-panel backdrop-blur-xl border border-panel-border/60 flex flex-col justify-between`}
                 style={{
                     backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(217, 70, 239, 0.03) 0%, transparent 60%)'
                 }}
@@ -197,7 +197,7 @@ export default function Reviews() {
             className="w-full py-24 bg-background relative overflow-hidden transition-colors duration-300"
         >
             {/* Background Glows */}
-            <div className="absolute top-1/4 right-[-10%] w-96 h-96 bg-gradient-to-tr from-brand-secondary/15 to-brand-primary/10 rounded-full filter blur-[130px] pointer-events-none animate-pulse"></div>
+            <div className="absolute top-1/4 right-[-10%] w-96 h-96 bg-gradient-to-tr from-brand-secondary/15 to-brand-primary/10 rounded-full filter blur-[130px] pointer-events-none"></div>
             <div className="absolute bottom-1/4 left-[-10%] w-[450px] h-[450px] bg-gradient-to-tr from-brand-primary/10 to-brand-secondary/15 rounded-full filter blur-[150px] pointer-events-none"></div>
 
             <div className="w-full max-w-7xl mx-auto px-6 relative z-10 mb-12 text-center md:text-left">

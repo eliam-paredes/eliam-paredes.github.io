@@ -1,21 +1,28 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { ref, onValue } from 'firebase/database';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { ref, get } from 'firebase/database';
 import { db } from '../firebase';
 import initialBd from '../data/bd.json';
 
 interface DataContextType {
   data: typeof initialBd | any;
   loading: boolean;
+  /** Reemplaza los datos en memoria (p. ej. tras publicar desde el panel admin). */
+  setPublishedData: (newData: any) => void;
 }
 
 const DataContext = createContext<DataContextType>({
   data: initialBd,
   loading: false,
+  setPublishedData: () => {},
 });
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<any>(initialBd);
   const [loading, setLoading] = useState<boolean>(true);
+  const setPublishedData = useCallback(
+    (newData: any) => setData({ ...initialBd, ...newData }),
+    []
+  );
 
   useEffect(() => {
     if (!db) {
@@ -23,34 +30,27 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    // Subscribe to Firebase Realtime Database live data (Public read - no auth needed)
-    const portfolioRef = ref(db, 'portfolio/bdData');
-    const unsubscribe = onValue(
-      portfolioRef,
-      (snapshot) => {
-        if (snapshot.exists()) {
-          const remoteData = snapshot.val();
-          if (remoteData && typeof remoteData === 'object') {
-            // Merge with initialBd structure to prevent undefined property errors
-            setData({
-              ...initialBd,
-              ...remoteData
-            });
-          }
+    // Lectura única (sin WebSocket persistente): los datos casi nunca cambian.
+    let cancelled = false;
+    get(ref(db, 'portfolio/bdData'))
+      .then((snapshot) => {
+        if (cancelled) return;
+        const remoteData = snapshot.exists() ? snapshot.val() : null;
+        if (remoteData && typeof remoteData === 'object') {
+          // Merge with initialBd structure to prevent undefined property errors
+          setData({ ...initialBd, ...remoteData });
         }
-        setLoading(false);
-      },
-      (error) => {
+      })
+      .catch((error) => {
         console.warn("No se pudo cargar desde Firebase Realtime Database. Usando bd.json local:", error);
-        setLoading(false);
-      }
-    );
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
 
-    return () => unsubscribe();
+    return () => { cancelled = true; };
   }, []);
 
   return (
-    <DataContext.Provider value={{ data, loading }}>
+    <DataContext.Provider value={{ data, loading, setPublishedData }}>
       {children}
     </DataContext.Provider>
   );

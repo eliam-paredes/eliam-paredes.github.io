@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import Frontend from './Layer/Frontend'
-import Backend from './Layer/Backend'
+
+// El panel admin (editores + Firebase Auth) va en un chunk aparte
+const Backend = lazy(() => import('./Layer/Backend'))
 
 function App() {
   const [view, setView] = useState<'landing' | 'backend'>('landing')
@@ -11,7 +13,11 @@ function App() {
   }, [view]);
 
   if (view === 'backend') {
-    return <Backend onBack={() => setView('landing')} />
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+        <Backend onBack={() => setView('landing')} />
+      </Suspense>
+    )
   }
 
   return <Frontend onEnterBackend={() => setView('backend')} />

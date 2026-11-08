@@ -1,16 +1,17 @@
 import { Briefcase, MapPin, Calendar, ChevronDown } from 'lucide-react';
+import { scrollToId } from '../../lib/scroll';
 import { usePortfolioData } from '../../context/DataContext';
 
 export default function Experience() {
     const { data: profile } = usePortfolioData();
     const handleScrollToProjects = () => {
-        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+        scrollToId('features');
     };
 
     return (
         <section id="experience-section" className="w-full min-h-screen py-24 px-6 bg-background-secondary relative overflow-hidden transition-colors duration-300">
             {/* Ambient background glow (Magenta-to-Cyan) */}
-            <div className="absolute top-1/3 left-[-10%] w-96 h-96 bg-gradient-to-tr from-brand-primary/10 to-brand-secondary/10 rounded-full filter blur-[150px] pointer-events-none animate-pulse"></div>
+            <div className="absolute top-1/3 left-[-10%] w-96 h-96 bg-gradient-to-tr from-brand-primary/10 to-brand-secondary/10 rounded-full filter blur-[150px] pointer-events-none"></div>
 
             <div className="max-w-5xl mx-auto z-10 relative">
                 {/* Header */}

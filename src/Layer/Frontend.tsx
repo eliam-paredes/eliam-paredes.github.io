@@ -1,5 +1,8 @@
 import { useEffect } from 'react'
 import Lenis from 'lenis'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { setLenis } from '../lib/scroll'
 import Hero from '../components/Frontend/Hero'
 import Reviews from '../components/Frontend/Reviews'
 import Experience from '../components/Frontend/Experience'
@@ -23,14 +26,19 @@ export default function Frontend({ onEnterBackend }: FrontendProps) {
       touchMultiplier: 2,
     })
 
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
+    setLenis(lenis)
 
-    requestAnimationFrame(raf)
+    // Sincroniza Lenis con GSAP: un solo bucle (el ticker de GSAP) y
+    // ScrollTrigger se actualiza con cada evento de scroll de Lenis.
+    gsap.registerPlugin(ScrollTrigger)
+    lenis.on('scroll', ScrollTrigger.update)
+    const tick = (time: number) => lenis.raf(time * 1000)
+    gsap.ticker.add(tick)
+    gsap.ticker.lagSmoothing(0)
 
     return () => {
+      gsap.ticker.remove(tick)
+      setLenis(null)
       lenis.destroy()
     }
   }, [])
